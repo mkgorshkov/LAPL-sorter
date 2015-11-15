@@ -1,60 +1,72 @@
 package com.mgorshkov.lydia;
 
+
+import com.mgorshkov.lydia.Converters.HorizontalConverter;
+import com.mgorshkov.lydia.Converters.RandomConverter;
+import com.mgorshkov.lydia.Converters.VerticalConverter;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Arrays;
 
 /**
  * @author Maxim Gorshkov <maxim.gorshkov<at>savoirfairelinux.com>
  */
 public class ImageImport {
 
-    public ImageImport(File f){
+    final static String[] TYPES = {"Horizontal", "Vertical", "Random"};
+
+    public ImageImport(File f, String input){
         try
         {
             InputStream is = new BufferedInputStream(new FileInputStream(f.getPath()));
             BufferedImage image = ImageIO.read(is);
-            marchThroughImage(image);
+            BufferedImage tmpImg = null;
+
+            if(input.equals(TYPES[0])){
+                HorizontalConverter horizontalConverter = new HorizontalConverter();
+                horizontalConverter.createImage(image);
+                tmpImg = horizontalConverter.returnConvertedImage();
+            }else if(input.equals(TYPES[1])){
+                VerticalConverter verticalConverter = new VerticalConverter();
+                verticalConverter.createImage(image);
+                tmpImg = verticalConverter.returnConvertedImage();
+            }else{
+                RandomConverter randomConverter = new RandomConverter();
+                randomConverter.createImage(image);
+                tmpImg = randomConverter.returnConvertedImage();
+            }
+
+            ImageIO.write(tmpImg, "png", new File("output.png"));
+
         } catch (IOException e)
         {
             System.err.println(e.getMessage());
         }
     }
 
-    private static void marchThroughImage(BufferedImage image) throws IOException {
-        int w = image.getWidth();
-        int h = image.getHeight();
-
-        BufferedImage tmpImg = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
-
-        int[][] b = new int[w][h];
-
-        for(int i = 0; i<w; i++){
-            for(int j = 0; j<h; j++){
-                b[i][j] = image.getRGB(i, j);
-            }
-        }
-
-
-
-//        for(int i = 0; i<b.length; i++){
-//            for(int j = 0; j<b[i].length; j++){
-//                System.out.println(b[i][j]);
-//            }
-//        }
-
-        for(int i = 0; i<w; i++){
-            Arrays.sort(b[i]);
-        }
-
-        for(int i = 0; i<w; i++){
-            for(int j = 0; j<h; j++){
-                tmpImg.setRGB(i, j, b[i][j]);
-            }
-        }
-
-            ImageIO.write(tmpImg, "png", new File(
-                    "output.png"));
-    }
+//    /*
+//    Horizontal
+//     */
+//    private static void marchThroughImage(BufferedImage image) throws IOException{
+//        int w = image.getWidth();
+//        int h = image.getHeight();
+//
+//
+//
+//
+//    }
+//
+//    /*
+//    Vertical
+//     */
+//    private static void marchThroughImage(BufferedImage image) throws IOException {
+//        int w = image.getWidth();
+//        int h = image.getHeight();
+//
+//
+//
+//            ImageIO.write(tmpImg, "png", new File(
+//                    "output.png"));
+//    }
 }

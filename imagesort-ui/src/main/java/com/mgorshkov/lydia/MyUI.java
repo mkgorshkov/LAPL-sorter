@@ -23,18 +23,22 @@ import java.io.OutputStream;
 @Widgetset("com.mgorshkov.lydia.MyAppWidgetset")
 public class MyUI extends UI {
 
+    final static String[] TYPES = {"Horizontal", "Vertical", "Random"};
+    private HorizontalLayout h;
+    private ComboBox selector;
+
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        HorizontalLayout h = new HorizontalLayout();
+        h = new HorizontalLayout();
         h.setSizeFull();
         h.setSpacing(true);
+        h.setMargin(true);
 
         // Show uploaded file in this placeholder
         final Embedded image = new Embedded("Sorted Image");
         image.setVisible(false);
 
-        // Implement both receiver that saves upload in a file and
-// listener for successful upload
         class ImageUploader implements Upload.Receiver, Upload.SucceededListener {
             public File file;
 
@@ -59,7 +63,7 @@ public class MyUI extends UI {
             public void uploadSucceeded(Upload.SucceededEvent event) {
                 // Show the uploaded file in the image viewer
 
-                ImageImport imageImport = new ImageImport(file);
+                ImageImport imageImport = new ImageImport(file, selector.getValue().toString());
                 image.setVisible(true);
                 image.setSource(new FileResource(new File("output.png")));
             }
@@ -71,14 +75,26 @@ public class MyUI extends UI {
         upload.setButtonCaption("Start Upload and Sort");
         upload.addSucceededListener(receiver);
 
+        selector = new ComboBox();
+        selector.addItems(TYPES);
+        selector.setNullSelectionAllowed(false);
+        selector.setValue(TYPES[0]);
+
         // Put the components in a panel
         Panel panel = new Panel();
-        Layout panelContent = new VerticalLayout();
-        panelContent.addComponents(upload, image);
+        VerticalLayout panelContent = new VerticalLayout();
+        panelContent.setSpacing(true);
+        panelContent.addComponents(upload);
+        panelContent.addComponent(selector);
+        panelContent.addComponent(image);
         panel.setContent(panelContent);
-        panel.setSizeFull();
+
+        panelContent.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
+        panelContent.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
+        panelContent.setComponentAlignment(selector, Alignment.MIDDLE_CENTER);
 
         h.addComponent(panel);
+//        h.setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
         setContent(h);
     }
 

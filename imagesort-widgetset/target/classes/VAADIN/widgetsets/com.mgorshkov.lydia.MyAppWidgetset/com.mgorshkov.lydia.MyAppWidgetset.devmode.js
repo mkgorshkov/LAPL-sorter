@@ -2,7 +2,7 @@ var $wnd = $wnd || window.parent;
 var __gwtModuleFunction = $wnd.com_mgorshkov_lydia_MyAppWidgetset;
 var $sendStats = __gwtModuleFunction.__sendStats;
 $sendStats('moduleStartup', 'moduleEvalStart');
-var $gwt_version = "7.5.2";
+var $gwt_version = "7.5.9";
 var $strongName = '';
 var $gwt = {};
 var $doc = $wnd.document;
